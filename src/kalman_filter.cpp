@@ -31,10 +31,13 @@ void KalmanFilter::Update(const VectorXd &z, MatrixXd H_, MatrixXd R_)
     MatrixXd S = H_ * P_ * H_.transpose() + R_;
     MatrixXd K = P_ * H_.transpose() * S.inverse();
 
+    cout << "y: " << y << endl;
+    cout << "S: " << S << endl;
+    cout << "K: " << K << endl;
+
     x_ = x_ + (K * y);
     MatrixXd I_ = MatrixXd::Identity(x_.size(), x_.size());
     P_ = (I_ - K * H_) * P_;
-    cout << "End of Update()" << endl;
 }
 
 void KalmanFilter::UpdateEKF(const VectorXd &z, MatrixXd H_, MatrixXd R_)
