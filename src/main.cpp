@@ -30,6 +30,7 @@ string hasData(string s)
 
 int main()
 {
+    cout << "Hello I'm Object Tracker!" << endl;
     uWS::Hub h;
 
     FusionEKF fusionEKF;
