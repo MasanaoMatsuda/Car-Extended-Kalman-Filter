@@ -31,7 +31,7 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations, const vector<
         rmse += residual;
     }
 
-    rmse = rmse / estimation.size();
+    rmse = rmse / estimations.size();
     rmse = rmse.array().sqrt();
 
     return rmse;
@@ -65,11 +65,10 @@ MatrixXd Tools::CalculateJacobian(const VectorXd &x_state)
 }
 
 
-VectorXd Tools::ConvertPolar2Cartesian(const VectorXd &raw_measurement)
+void Tools::ConvertPolar2Cartesian(const VectorXd &raw_measurement)
 {
     float rho = raw_measurement[0];
     float phi = raw_measurement[1];
     float rho_dot = raw_measurement[2];
 
-    return null;
 }
