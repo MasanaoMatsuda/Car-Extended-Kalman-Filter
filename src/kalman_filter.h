@@ -16,4 +16,5 @@ public:
     void Predict(MatrixXd F_, MatrixXd Q_);
     void Update(const VectorXd &z, MatrixXd H_, MatrixXd R_);
     void UpdateEKF(const VectorXd &z, MatrixXd H_, MatrixXd R_);
+    VectorXd GetX();
 };

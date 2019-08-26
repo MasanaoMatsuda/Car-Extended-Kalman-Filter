@@ -117,24 +117,26 @@ int main() {
             //   state vector
 
             VectorXd estimate(4);
-
-            double p_x = fusionEKF.ekf_.x_(0);
-            double p_y = fusionEKF.ekf_.x_(1);
-            double v1  = fusionEKF.ekf_.x_(2);
-            double v2 = fusionEKF.ekf_.x_(3);
-
+            VectorXd x_ = fusionEKF.ekf_.GetX();
+            estimate << x_(0), x_(1), x_(2), x_(3);
+            //double p_x = x_(0);
+            //double p_y = x_(1);
+            //double v1  = x_(2);
+            //double v2 = x_(3);
+/*
             estimate(0) = p_x;
             estimate(1) = p_y;
             estimate(2) = v1;
             estimate(3) = v2;
-
+*/
+            std::cout << "End Process measurement: " << x_ << endl;
             estimations.push_back(estimate);
 
             VectorXd RMSE = tools.CalculateRMSE(estimations, ground_truth);
 
             json msgJson;
-            msgJson["estimate_x"] = p_x;
-            msgJson["estimate_y"] = p_y;
+            msgJson["estimate_x"] = estimate(0);
+            msgJson["estimate_y"] = estimate(1);
             msgJson["rmse_x"] =  RMSE(0);
             msgJson["rmse_y"] =  RMSE(1);
             msgJson["rmse_vx"] = RMSE(2);

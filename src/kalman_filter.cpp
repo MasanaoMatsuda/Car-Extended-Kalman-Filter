@@ -41,3 +41,8 @@ void KalmanFilter::UpdateEKF(const VectorXd &z, MatrixXd H_, MatrixXd R_)
 {
 
 }
+
+VectorXd GetX()
+{
+    return x_;
+}
