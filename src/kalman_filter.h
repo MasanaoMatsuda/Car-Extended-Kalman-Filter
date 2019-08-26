@@ -5,20 +5,15 @@ using Eigen::MatrixXd;
 
 class KalmanFilter
 {
-public:
     VectorXd x_;
     MatrixXd P_;
-    MatrixXd F_;
-    MatrixXd H_;
-    MatrixXd R_;
-    MatrixXd Q_;
     MatrixXd I_;
 
+public:
     KalmanFilter();
     ~KalmanFilter();
-    void Init(VectorXd &x_in, MatrixXd &P_in, MatrixXd &F_in,
-              MatrixXd &H_in, MatrixXd &R_in, MatrixXd &Q_in);
-    void Predict();
-    void Update(const VectorXd &z);
-    void UpdateEKF(const VectorXd &z);
+    void InitState(VectorXd &x_in, MatrixXd &P_in);
+    void Predict(MatrixXd F_, MatrixXd Q_);
+    void Update(const VectorXd &z, MatrixXd H_, MatrixXd R_);
+    void UpdateEKF(const VectorXd &z, MatrixXd H_, MatrixXd R_);
 };

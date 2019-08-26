@@ -21,7 +21,7 @@ FusionEKF::FusionEKF()
     R_radar_ << 0.09, 0, 0,
                 0, 0.0009, 0,
                 0, 0, 0.09;
-    //
+
     H_laser_ << 1, 0, 0, 0,
                 0, 1, 0, 0;
 
@@ -32,14 +32,14 @@ FusionEKF::FusionEKF()
           0, 0, 0, 1000;
 
     F_ = MatrixXd(4,4);
-    F_ << 1, 0, 1, 0,
-          0, 1, 0, 1,
-          0, 0, 1, 0,
-          0, 0, 0, 1;
+//    F_ << 1, 0, 1, 0,
+//          0, 1, 0, 1,
+//          0, 0, 1, 0,
+//          0, 0, 0, 1;
 
     Q_ = MatrixXd(4,4);
 
-    x_ = VectorXd(4);
+
 }
 
 
@@ -54,11 +54,12 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack)
     {
         cout << "EKF: " << measurement_pack.sensor_type_ << endl;
 
+        x_ = VectorXd(4);
         if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR)
         {
             x_ << 0, 0, 0, 0;
             tools.ConvertPolar2Cartesian(measurement_pack.raw_measurements_);
-            ekf_.Init(x_, P_, F_, Hj_, R_radar_, Q_);
+            ekf_.InitState(x_, P_);
             return;
         }
         else
@@ -67,23 +68,26 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack)
                   measurement_pack.raw_measurements_[1],
                   0,
                   0;
-            ekf_.Init(x_, P_, F_, H_laser_, R_laser_, Q_);
+            ekf_.InitState(x_, P_);
         }
 
         previous_timestamp_ = measurement_pack.timestamp_;
         is_initialized_ = true;
-        cout << "is_initialized = true" << endl;
 
         return;
     }
-    cout << "Second mesurement: " << endl;
+
+    if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR)
+    {
+        cout << "Sensor type is RADAR: " << measurement_pack.sensor_type_ << endl;
+        return;
+    }
+
     float dt = (measurement_pack.timestamp_ - previous_timestamp_) * 1000000.0; // express in sec.
-    cout << "Delta T: " << dt << endl;
 
     F_ = CalculateTransitionCovariance(dt);
     Q_ = CalculateProcessCovariance(dt);
-
-    ekf_.Predict();
+    ekf_.Predict(F_, Q_);
 
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR)
     {
