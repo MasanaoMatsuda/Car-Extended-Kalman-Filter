@@ -16,6 +16,7 @@ using json = nlohmann::json;
 
 string hasData(string s)
 {
+    cout << "hasData() " << s << endl;
     auto found_null = s.find("null");
     auto b1 = s.find_first_of("[");
     auto b2 = s.find_first_of("]");
