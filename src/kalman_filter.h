@@ -19,6 +19,6 @@ public:
     void Init(VectorXd &x_in, MatrixXd &P_in, MatrixXd &F_in,
               MatrixXd &H_in, MatrixXd &R_in, MatrixXd &Q_in);
     void Predict();
-    void Update();
+    void Update(const VectorXd &z);
     void UpdateEKF(const VectorXd &z);
 };

@@ -1,4 +1,5 @@
 #include "FusionEKF.h"
+#include <iostream>
 
 using std::cout;
 using std::endl;
@@ -55,7 +56,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack)
 
         if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR)
         {
-            x_ = tools.ConvertPolar2Cartesian(measurement_pack);
+            x_ = tools.ConvertPolar2Cartesian(measurement_pack.raw_measurements_);
             ekf_.Init(x_, P_, F_, Hj_, R_radar_, Q_);
             return;
         }
