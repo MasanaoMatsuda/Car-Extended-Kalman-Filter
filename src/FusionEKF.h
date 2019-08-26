@@ -1,5 +1,6 @@
 #include "kalman_filter.h"
 #include "measurement_package.h"
+#include "tools.h"
 #include "Eigen/Dense"
 
 using Eigen::MatrixXd;
