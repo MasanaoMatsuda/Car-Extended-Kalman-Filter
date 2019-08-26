@@ -67,6 +67,8 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack)
                   measurement_pack.raw_measurements_[1],
                   0,
                   0;
+            cout << "vector x: " << x_ << endl;
+            cout << "time stamp: " << measurement_pack.timestamp_ << endl;
             ekf_.Init(x_, P_, F_, H_laser_, R_laser_, Q_);
         }
 
