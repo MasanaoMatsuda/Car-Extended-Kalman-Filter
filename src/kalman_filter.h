@@ -5,6 +5,7 @@ using Eigen::MatrixXd;
 
 class KalmanFilter
 {
+public:
     VectorXd x_;
     MatrixXd P_;
     MatrixXd F_;
@@ -13,7 +14,6 @@ class KalmanFilter
     MatrixXd Q_;
     MatrixXd I_;
 
-public:
     KalmanFilter();
     ~KalmanFilter();
     void Init(VectorXd &x_in, MatrixXd &P_in, MatrixXd &F_in,

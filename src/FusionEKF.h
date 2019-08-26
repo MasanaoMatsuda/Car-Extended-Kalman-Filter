@@ -7,7 +7,6 @@ using Eigen::MatrixXd;
 
 class FusionEKF
 {
-    KalmanFilter ekf_;
     MatrixXd R_laser_;
     MatrixXd R_radar_;
     MatrixXd H_laser_;
@@ -18,6 +17,7 @@ class FusionEKF
     const int noise_ay;
 
 public:
+    KalmanFilter ekf_;
     FusionEKF();
     ~FusionEKF();
     void ProcessMeasurement(const MeasurementPackage &measurement_pack);
