@@ -15,7 +15,7 @@ public:
     virtual ~Tools();
     VectorXd CalculateRMSE(const vector<VectorXd> &estimations, const vector<VectorXd> &ground_truth);
     MatrixXd CalculateJacobian(const VectorXd &x_state);
-    VectorXd ConvertPolar2Cartesian(const VectorXd &raw_measurement);
+    void ConvertPolar2Cartesian(const VectorXd &raw_measurement);
 };
 
 #endif
