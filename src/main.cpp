@@ -50,6 +50,7 @@ int main()
         // The 4 signifies a websocket message.
         // The 2 signifies a websocket event.
         cout << "onMessage()" << endl;
+        cout << "websocket message event: " << data[0] << data[1] << endl;
 
         if (length > 2 && data[0] == '4' && data[1] == '2')
         {
