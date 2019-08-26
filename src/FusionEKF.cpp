@@ -1,5 +1,8 @@
 #include "FusionEKF.h"
 
+using std::cout;
+using std::endl;
+
 FusionEKF::FusionEKF()
 {
     is_initialized_ = false;
@@ -33,9 +36,9 @@ FusionEKF::FusionEKF()
           0, 0, 1, 0,
           0, 0, 0, 1;
 
-    Q = MatrixXd(4,4);
-    noise_ax = 9;
-    noise_ay = 9;
+    Q_ = MatrixXd(4,4);
+
+    x_ = VectorXd(4);
 }
 
 
@@ -53,7 +56,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack)
         if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR)
         {
             x_ = tools.ConvertPolar2Cartesian(measurement_pack);
-            ekf_.Init(x_, P_, F_, H_, R_, Q_);
+            ekf_.Init(x_, P_, F_, Hj_, R_radar_, Q_);
             return;
         }
         else
@@ -71,15 +74,15 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack)
         return;
     }
 
-    float dt = (measurement_pack.timestamp_ - timestamp_) * 1000000.0; // express in sec.
+    float dt = (measurement_pack.timestamp_ - previous_timestamp_) * 1000000.0; // express in sec.
     F_ = CalculateTransitionCovariance(dt);
     Q_ = CalculateProcessCovariance(dt);
 
     ekf_.Predict();
 
-    if (measurement_pack.sensor_type == MeasurementPackage::RADAR)
+    if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR)
     {
-        Hj_ = CalculateJacobian(measurement_pack.raw_measurements_);
+        Hj_ = tools.CalculateJacobian(measurement_pack.raw_measurements_);
 
         ekf_.UpdateEKF(measurement_pack.raw_measurements_);
         return;
@@ -114,9 +117,9 @@ MatrixXd CalculateProcessCovariance(const float &dt)
     float dt4 = dt * dt3;
 
     MatrixXd Q(4,4);
-    Q << dt4/4*FusionEKF::noise_ax, 0, dt3/2*FusionEKF::noise_ax, 0,
-         0, dt4/4*FusionEKF::noise_ay, 0, dt3/2*FusionEKF::noise_ay,
-         dt3/2*FusionEKF::noise_ax, 0, dt2*FusionEKF::noise_ax, 0,
-         0, dt3/2*FusionEKF::noise_ay, 0, dt2*FusionEKF::noise_ay;
+    Q << dt4/4*noise_ax, 0, dt3/2*noise_ax, 0,
+         0, dt4/4*noise_ay, 0, dt3/2*noise_ay,
+         dt3/2*noise_ax, 0, dt2*noise_ax, 0,
+         0, dt3/2*noise_ay, 0, dt2*noise_ay;
     return Q;
 }

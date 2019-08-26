@@ -2,7 +2,6 @@
 #include "measurement_package.h"
 #include "Eigen/Dense"
 
-using std::cout;
 using Eigen::MatrixXd;
 
 class FusionEKF
@@ -11,10 +10,14 @@ class FusionEKF
     MatrixXd R_radar_;
     MatrixXd H_laser_;
     MatrixXd Hj_;
+    MatrixXd P_;
+    MatrixXd F_;
+    MatrixXd Q_;
     bool is_initialized_;
     long long previous_timestamp_;
-    const int noise_ax;
-    const int noise_ay;
+    const int noise_ax = 9;
+    const int noise_ay = 9;
+    Tools tools;
 
 public:
     KalmanFilter ekf_;
