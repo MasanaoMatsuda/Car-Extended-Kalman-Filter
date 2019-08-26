@@ -114,9 +114,9 @@ MatrixXd CalculateProcessCovariance(const float &dt)
     float dt4 = dt * dt3;
 
     MatrixXd Q(4,4);
-    Q << dt4/4*noise_ax, 0, dt3/2*noise_ax, 0,
-         0, dt4/4*noise_ay, 0, dt3/2*noise_ay,
-         dt3/2*noise_ax, 0, dt2*noise_ax, 0,
-         0, dt3/2*noise_ay, 0, dt2*noise_ay;
+    Q << dt4/4*FusionEKF::noise_ax, 0, dt3/2*FusionEKF::noise_ax, 0,
+         0, dt4/4*FusionEKF::noise_ay, 0, dt3/2*FusionEKF::noise_ay,
+         dt3/2*FusionEKF::noise_ax, 0, dt2*FusionEKF::noise_ax, 0,
+         0, dt3/2*FusionEKF::noise_ay, 0, dt2*FusionEKF::noise_ay;
     return Q;
 }
