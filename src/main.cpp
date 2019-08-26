@@ -51,7 +51,7 @@ int main()
         // The 2 signifies a websocket event.
         cout << "onMessage()" << endl;
 
-        if (length && length > 2 && data[0] == '4' && data[1] == '2')
+        if (length > 2 && data[0] == '4' && data[1] == '2')
         {
             auto s = hasData(string(data));
 
@@ -173,5 +173,6 @@ int main()
         }
 
         h.run();
+        cout << "run()" << endl;
     return 0;
 }
