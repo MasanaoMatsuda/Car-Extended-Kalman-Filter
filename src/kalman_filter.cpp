@@ -15,7 +15,6 @@ KalmanFilter::~KalmanFilter()
 void KalmanFilter::Init(VectorXd &x_in, MatrixXd &P_in, MatrixXd &F_in,
                         MatrixXd &H_in, MatrixXd &R_in, MatrixXd &Q_in)
 {
-    cout << "KalmanFilter.Init()" << endl;
     x_ = x_in;
     P_ = P_in;
     F_ = F_in;
@@ -26,14 +25,12 @@ void KalmanFilter::Init(VectorXd &x_in, MatrixXd &P_in, MatrixXd &F_in,
 
 void KalmanFilter::Predict()
 {
-    cout << "KalmanFilter.Predict()" << endl;
     x_ = F_ * x_;
     P_ = F_ * P_ * F_.transpose() + Q_;
 }
 
 void KalmanFilter::Update(const VectorXd &z)
 {
-    cout << "KalmanFilter.Update()" << endl;
     VectorXd y = z - H_ * x_;
     MatrixXd S = H_ * P_ * H_.transpose() + R_;
     MatrixXd K = P_ * H_.transpose() * S.inverse();

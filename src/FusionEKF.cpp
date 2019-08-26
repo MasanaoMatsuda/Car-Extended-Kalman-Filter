@@ -52,7 +52,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack)
 {
     if (!is_initialized_)
     {
-        cout << "EKF: " << endl;
+        cout << "EKF: " << measurement_pack.sensor_type_ << endl;
 
         if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR)
         {
