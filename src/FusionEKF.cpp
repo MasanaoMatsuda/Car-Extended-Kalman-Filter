@@ -72,8 +72,8 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack)
     }
 
     float dt = (measurement_pack.timestamp_ - timestamp_) * 1000000.0; // express in sec.
-    F_ = tools.CalculateTransitionCovariance(dt);
-    Q_ = tools.CalculateProcessCovariance(dt);
+    F_ = CalculateTransitionCovariance(dt);
+    Q_ = CalculateProcessCovariance(dt);
 
     ekf_.Predict();
 
@@ -93,4 +93,30 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack)
 
     cout << "x_ = " << ekf_.x_ << endl;
     cout << "P_ = " << ekf_.P_ << endl;
+}
+
+
+MatrixXd Tools::CalculateTransitionCovariance(const float &dt)
+{
+    MatrixXd F(4,4);
+    F << 1, 0, dt, 0,
+         0, 1, 0, dt,
+         0, 0, 1, 0,
+         0, 0, 0, 1;
+    return F;
+}
+
+
+MatrixXd Tools::CalculateProcessCovariance(const float &dt)
+{
+    float dt2 = dt * dt;
+    float dt3 = dt * dt2;
+    float dt4 = dt * dt3;
+
+    MatrixXd Q(4,4);
+    Q << dt4/4*noise_ax, 0, dt3/2*noise_ax, 0,
+         0, dt4/4*noise_ay, 0, dt3/2*noise_ay,
+         dt3/2*noise_ax, 0, dt2*noise_ax, 0,
+         0, dt3/2*noise_ay, 0, dt2*noise_ay;
+    return Q;
 }

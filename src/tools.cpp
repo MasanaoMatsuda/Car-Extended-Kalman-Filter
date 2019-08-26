@@ -1,6 +1,9 @@
 #include "tools.h"
 #include <iostream>
 
+using std::cout;
+using std::endl;
+
 Tools::Tools()
 {
 }
@@ -10,7 +13,7 @@ Tools::~Tools()
 }
 
 
-VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations, const vecrot<VecrotXd> &ground_truth)
+VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations, const vector<VectorXd> &ground_truth)
 {
     VectorXd rmse(4);
     rmse << 0,0,0,0;
@@ -59,32 +62,6 @@ MatrixXd Tools::CalculateJacobian(const VectorXd &x_state)
           py*(vx*py - vy*px)/c3, px*(px*vy-py*vx)/c3, px/c2, py/c2;
 
     return Hj;
-}
-
-
-MatrixXd Tools::CalculateTransitionCovariance(const float &dt)
-{
-    MatrixXd F(4,4);
-    F << 1, 0, dt, 0,
-         0, 1, 0, dt,
-         0, 0, 1, 0,
-         0, 0, 0, 1;
-    return F;
-}
-
-
-MatrixXd Tools::CalculateProcessCovariance(const float &dt)
-{
-    float dt2 = dt * dt;
-    float dt3 = dt * dt2;
-    float dt4 = dt * dt3;
-
-    MatrixXd Q(4,4);
-    Q << dt4/4*noise_ax, 0, dt3/2*noise_ax, 0,
-         0, dt4/4*noise_ay, 0, dt3/2*noise_ay,
-         dt3/2*noise_ax, 0, dt2*noise_ax, 0,
-         0, dt3/2*noise_ay, 0, dt2*noise_ay;
-    return Q;
 }
 
 

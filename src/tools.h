@@ -15,8 +15,6 @@ public:
     virtual ~Tools();
     VectorXd CalculateRMSE(const vector<VectorXd> &estimations, const vector<VectorXd> &ground_truth);
     MatrixXd CalculateJacobian(const VectorXd &x_state);
-    MatrixXd CalculateTransitionCovariance(const float &dt);
-    MatrixXd CalculateProcessCovariance(const float &dt);
     VectorXd ConvertPolar2Cartesian(const VectorXd &raw_measurement);
 };
 
