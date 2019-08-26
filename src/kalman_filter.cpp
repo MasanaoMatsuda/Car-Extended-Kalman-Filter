@@ -34,8 +34,8 @@ void KalmanFilter::Update(const VectorXd &z, MatrixXd H_, MatrixXd R_)
     cout << "y: " << y << endl;
     cout << "S: " << S << endl;
     cout << "K: " << K << endl;
-    cout << "H: " << H << endl;
-    cout << "R: " << R << endl;
+    cout << "H: " << H_ << endl;
+    cout << "R: " << R_ << endl;
     x_ = x_ + (K * y);
     MatrixXd I_ = MatrixXd::Identity(x_.size(), x_.size());
     P_ = (I_ - K * H_) * P_;
