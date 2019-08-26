@@ -96,7 +96,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack)
 }
 
 
-MatrixXd Tools::CalculateTransitionCovariance(const float &dt)
+MatrixXd CalculateTransitionCovariance(const float &dt)
 {
     MatrixXd F(4,4);
     F << 1, 0, dt, 0,
@@ -107,7 +107,7 @@ MatrixXd Tools::CalculateTransitionCovariance(const float &dt)
 }
 
 
-MatrixXd Tools::CalculateProcessCovariance(const float &dt)
+MatrixXd CalculateProcessCovariance(const float &dt)
 {
     float dt2 = dt * dt;
     float dt3 = dt * dt2;
