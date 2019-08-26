@@ -67,18 +67,19 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack)
                   measurement_pack.raw_measurements_[1],
                   0,
                   0;
-            cout << "vector x: " << x_ << endl;
-            cout << "time stamp: " << measurement_pack.timestamp_ << endl;
             ekf_.Init(x_, P_, F_, H_laser_, R_laser_, Q_);
         }
 
         previous_timestamp_ = measurement_pack.timestamp_;
         is_initialized_ = true;
+        cout << "is_initialized = true" << endl;
 
         return;
     }
-
+    cout << "Second mesurement: " << endl;
     float dt = (measurement_pack.timestamp_ - previous_timestamp_) * 1000000.0; // express in sec.
+    cout << "Delta T: " << dt << endl;
+
     F_ = CalculateTransitionCovariance(dt);
     Q_ = CalculateProcessCovariance(dt);
 
@@ -105,6 +106,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack)
 
 MatrixXd FusionEKF::CalculateTransitionCovariance(const float &dt)
 {
+    cout << "CalculateTransitionCovariance()" << endl;
     MatrixXd F(4,4);
     F << 1, 0, dt, 0,
          0, 1, 0, dt,
@@ -116,6 +118,7 @@ MatrixXd FusionEKF::CalculateTransitionCovariance(const float &dt)
 
 MatrixXd FusionEKF::CalculateProcessCovariance(const float &dt)
 {
+    cout << "CalculateProcessCovariance()" << endl;
     float dt2 = dt * dt;
     float dt3 = dt * dt2;
     float dt4 = dt * dt3;
