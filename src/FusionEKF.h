@@ -15,7 +15,7 @@ class FusionEKF
     MatrixXd P_;
     MatrixXd F_;
     MatrixXd Q_;
-    VecrotXd x_;
+    VectorXd x_;
     bool is_initialized_;
     long long previous_timestamp_;
     const int noise_ax = 9;
