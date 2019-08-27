@@ -20,8 +20,17 @@ void KalmanFilter::InitState(VectorXd &x_in, MatrixXd &P_in)
 
 void KalmanFilter::Predict(MatrixXd F_, MatrixXd Q_)
 {
+    cout << "KalmanFilter::Predict()" << endl;
+    cout << "Pre" << endl;
+    cout << "x: " << x_ << endl;
+    cout << "P: " << P_ << endl;
+    cout << "Q: " << Q_ << endl;
     x_ = F_ * x_;
     P_ = F_ * P_ * F_.transpose() + Q_;
+    cout << F_ * P_ * F_.transpose() << "\n" << endl;
+    cout << "Post" << endl;
+    cout << "x: " << x_ << endl;
+    cout << "P: " << P_ << endl;
 }
 
 void KalmanFilter::Update(const VectorXd &z, MatrixXd H_, MatrixXd R_)
@@ -36,6 +45,7 @@ void KalmanFilter::Update(const VectorXd &z, MatrixXd H_, MatrixXd R_)
     cout << "K: " << K << endl;
     cout << "H: " << H_ << endl;
     cout << "R: " << R_ << endl;
+    cout << "P: " << P_ << endl;
     x_ = x_ + (K * y);
     MatrixXd I_ = MatrixXd::Identity(x_.size(), x_.size());
     P_ = (I_ - K * H_) * P_;
