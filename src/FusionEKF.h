@@ -27,6 +27,8 @@ public:
     FusionEKF();
     ~FusionEKF();
     void ProcessMeasurement(const MeasurementPackage &measurement_pack);
+    VectorXd InitializeStateX(const MeasurementPackage &measurement_pack);
     MatrixXd CalculateTransitionCovariance(const float &dt);
     MatrixXd CalculateProcessCovariance(const float &dt);
+    MatrixXd CalculateJacobian(const VectorXd &x_state);
 };

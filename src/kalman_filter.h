@@ -1,4 +1,5 @@
 #include "Eigen/Dense"
+#include "tools.h"
 
 using Eigen::VectorXd;
 using Eigen::MatrixXd;
@@ -8,7 +9,7 @@ class KalmanFilter
     VectorXd x_;
     MatrixXd P_;
     MatrixXd I_;
-
+    Tools tools;
 public:
     KalmanFilter();
     ~KalmanFilter();

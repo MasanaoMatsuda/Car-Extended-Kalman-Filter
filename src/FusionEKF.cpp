@@ -12,7 +12,7 @@ FusionEKF::FusionEKF()
     R_laser_ = MatrixXd(2,2);
     R_radar_ = MatrixXd(3,3);
     H_laser_ = MatrixXd(2,4);
-    Hj_ = MatrixXd(3,4);
+    P_ = MatrixXd(4,4);
 
     // measurement covariance matrix - laser
     R_laser_ << 0.0225, 0,
@@ -25,21 +25,10 @@ FusionEKF::FusionEKF()
     H_laser_ << 1, 0, 0, 0,
                 0, 1, 0, 0;
 
-    P_ = MatrixXd(4,4);
     P_ << 1000, 0, 0, 0,
           0, 1000, 0, 0,
           0, 0, 1000, 0,
           0, 0, 0, 1000;
-
-    F_ = MatrixXd(4,4);
-//    F_ << 1, 0, 1, 0,
-//          0, 1, 0, 1,
-//          0, 0, 1, 0,
-//          0, 0, 0, 1;
-
-    Q_ = MatrixXd(4,4);
-
-
 }
 
 
@@ -50,36 +39,14 @@ FusionEKF::~FusionEKF()
 
 void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack)
 {
+    cout<<"FusionEKF::ProcessMeasurement()"<<endl;
+
     if (!is_initialized_)
     {
-        cout << "EKF: " << measurement_pack.sensor_type_ << endl;
-
-        x_ = VectorXd(4);
-        if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR)
-        {
-            x_ << 0, 0, 0, 0;
-            tools.ConvertPolar2Cartesian(measurement_pack.raw_measurements_);
-            ekf_.InitState(x_, P_);
-            return;
-        }
-        else
-        {
-            x_ << measurement_pack.raw_measurements_[0],
-                  measurement_pack.raw_measurements_[1],
-                  0,
-                  0;
-            ekf_.InitState(x_, P_);
-        }
-
+        x_ = InitializeStateX(measurement_pack);
+        ekf_.InitState(x_, P_);
         previous_timestamp_ = measurement_pack.timestamp_;
         is_initialized_ = true;
-
-        return;
-    }
-
-    if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR)
-    {
-        cout << "Sensor type is RADAR: " << measurement_pack.sensor_type_ << endl;
         return;
     }
 
@@ -92,23 +59,40 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack)
 
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR)
     {
-        Hj_ = tools.CalculateJacobian(measurement_pack.raw_measurements_);
-
-        ekf_.UpdateEKF(measurement_pack.raw_measurements_, Hj_, R_radar_);
-        return;
+        MatrixXd Hj = CalculateJacobian(x_);
+        ekf_.UpdateEKF(measurement_pack.raw_measurements_, Hj, R_radar_);
     }
     else
     {
         ekf_.Update(measurement_pack.raw_measurements_, H_laser_, R_laser_);
     }
+}
 
-    cout << "End of ProcessMeasurement()" << endl;
+VectorXd FusionEKF::InitializeStateX(const MeasurementPackage &measurement_pack)
+{
+    cout<<"FusionEKF::InitializeStateX()"<<endl;
+    VectorXd x(4);
+    if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR)
+    {
+        VectorXd cartesian_xy = tools.ConvertPolar2Cartesian(measurement_pack.raw_measurements_);
+        x << cartesian_xy(0),
+             cartesian_xy(1),
+             0,
+             0;
+    }
+    else
+    {
+        x << measurement_pack.raw_measurements_[0],
+             measurement_pack.raw_measurements_[1],
+             0,
+             0;
+    }
+    return x;
 }
 
 
 MatrixXd FusionEKF::CalculateTransitionCovariance(const float &dt)
 {
-    cout << "CalculateTransitionCovariance()" << endl;
     MatrixXd F(4,4);
     F << 1, 0, dt, 0,
          0, 1, 0, dt,
@@ -120,7 +104,6 @@ MatrixXd FusionEKF::CalculateTransitionCovariance(const float &dt)
 
 MatrixXd FusionEKF::CalculateProcessCovariance(const float &dt)
 {
-    cout << "CalculateProcessCovariance()" << endl;
     float dt2 = dt * dt;
     float dt3 = dt * dt2;
     float dt4 = dt * dt3;
@@ -130,6 +113,32 @@ MatrixXd FusionEKF::CalculateProcessCovariance(const float &dt)
          0, dt4/4*noise_ay, 0, dt3/2*noise_ay,
          dt3/2*noise_ax, 0, dt2*noise_ax, 0,
          0, dt3/2*noise_ay, 0, dt2*noise_ay;
-    cout << "1 Q:"  << Q << endl;
     return Q;
+}
+
+
+MatrixXd FusionEKF::CalculateJacobian(const VectorXd &x_state)
+{
+    MatrixXd Hj(3,4);
+
+    float px = x_state(0);
+    float py = x_state(1);
+    float vx = x_state(2);
+    float vy = x_state(3);
+
+    float c1 = px*px+py*py;
+    float c2 = sqrt(c1);
+    float c3 = (c1*c2);
+
+    if (fabs(c1) < 0.0001)
+    {
+        cout << "CalculateJacobian() - Error - Division by Zero" << endl;
+        return Hj;
+    }
+
+    Hj << (px/c2), (py/c2), 0, 0,
+          -(py/c1), (px/c1), 0, 0,
+          py*(vx*py - vy*px)/c3, px*(px*vy-py*vx)/c3, px/c2, py/c2;
+
+    return Hj;
 }

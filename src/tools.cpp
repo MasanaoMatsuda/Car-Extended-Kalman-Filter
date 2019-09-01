@@ -15,6 +15,8 @@ Tools::~Tools()
 
 VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations, const vector<VectorXd> &ground_truth)
 {
+    cout<<"Tools::CalculateRMSE()"<<endl;
+
     VectorXd rmse(4);
     rmse << 0,0,0,0;
 
@@ -38,37 +40,35 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations, const vector<
 }
 
 
-MatrixXd Tools::CalculateJacobian(const VectorXd &x_state)
-{
-    MatrixXd Hj(3,4);
-
-    float px = x_state(0);
-    float py = x_state(1);
-    float vx = x_state(2);
-    float vy = x_state(3);
-
-    float c1 = px*px+py*py;
-    float c2 = sqrt(c1);
-    float c3 = (c1*c2);
-
-    if (fabs(c1) < 0.0001)
-    {
-        cout << "CalculateJacobian() - Error - Division by Zero" << endl;
-        return Hj;
-    }
-
-    Hj << (px/c2), (py/c2), 0, 0,
-          -(py/c1), (px/c1), 0, 0,
-          py*(vx*py - vy*px)/c3, px*(px*vy-py*vx)/c3, px/c2, py/c2;
-
-    return Hj;
-}
-
-
-void Tools::ConvertPolar2Cartesian(const VectorXd &raw_measurement)
+VectorXd Tools::ConvertPolar2Cartesian(const VectorXd &raw_measurement)
 {
     float rho = raw_measurement[0];
     float phi = raw_measurement[1];
-    float rho_dot = raw_measurement[2];
 
+    VectorXd xy(2);
+    xy << rho * cos(phi),
+          rho * sin(phi);
+
+    return xy;
+}
+
+
+VectorXd Tools::ConvertCartesian2Polar(const VectorXd &x_pred)
+{
+    float px = x_pred(0);
+    float py = x_pred(1);
+    float vx = x_pred(2);
+    float vy = x_pred(3);
+
+    float rho_pred = sqrt(pow(px,2) + pow(py,2));
+    if (rho_pred < 0.0001)
+    {
+        rho_pred = 0.0001;
+    }
+
+    VectorXd z_pred(3);
+    z_pred << rho_pred,
+              atan2(py, px),
+              (px*vx + py*vy) / rho_pred;
+    return z_pred;
 }
