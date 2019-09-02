@@ -27,8 +27,8 @@ FusionEKF::FusionEKF()
 
     P_ << 1000, 0, 0, 0,
           0, 1000, 0, 0,
-          0, 0, 1000, 0,
-          0, 0, 0, 1000;
+          0, 0, 500, 0,
+          0, 0, 0, 20;
 }
 
 
@@ -59,7 +59,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack)
 
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR)
     {
-        MatrixXd Hj = CalculateJacobian(x_);
+        MatrixXd Hj = CalculateJacobian(ekf_.GetX());
         ekf_.UpdateEKF(measurement_pack.raw_measurements_, Hj, R_radar_);
     }
     else
